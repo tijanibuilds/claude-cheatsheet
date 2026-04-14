@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Cheatsheet</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="light"] {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: #e0d9ce;
+    --text: #1a1714;
+    --text-muted: #6b6460;
+    --accent: #c45c2a;
+    --accent2: #2a6b8a;
+    --accent3: #4a7c40;
+    --accent4: #7a4a9a;
+    --accent5: #8a6a20;
+    --tag-bg: #fef3ec;
+    --tag-border: #f0c4a0;
+    --code-bg: #f0ede6;
+    --code-text: #c45c2a;
+    --nav-bg: #ffffff;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    --checklist-bg: #f0f7ec;
+    --checklist-border: #b8d9aa;
+    --warn-bg: #fef8ec;
+    --warn-border: #f0d080;
+    --tip-bg: #ecf3fe;
+    --tip-border: #a0c0f0;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0e0c;
+    --surface: #1a1814;
+    --surface2: #242018;
+    --border: #302c24;
+    --text: #e8e2d8;
+    --text-muted: #8a8078;
+    --accent: #e07848;
+    --accent2: #5aabcc;
+    --accent3: #78b86a;
+    --accent4: #b07acc;
+    --accent5: #cca848;
+    --tag-bg: #2a1e14;
+    --tag-border: #5a3820;
+    --code-bg: #242018;
+    --code-text: #e07848;
+    --nav-bg: #141210;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+    --checklist-bg: #141e10;
+    --checklist-border: #385228;
+    --warn-bg: #1e1a08;
+    --warn-border: #504020;
+    --tip-bg: #0e1420;
+    --tip-border: #204060;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.65;
+    transition: background 0.25s, color 0.25s;
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: 220px;
+    height: 100vh;
+    background: var(--nav-bg);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+    transition: background 0.25s;
+  }
+  .nav-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .nav-logo h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+  .nav-logo span {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 300;
+    font-style: italic;
+  }
+  .nav a {
+    display: block;
+    padding: 6px 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .nav a:hover, .nav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: var(--tag-bg);
+  }
+  .nav-section-label {
+    padding: 12px 20px 4px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  /* THEME TOGGLE */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 200;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: var(--shadow);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* MAIN */
+  .main {
+    margin-left: 220px;
+    padding: 40px 40px 80px;
+    max-width: 960px;
+  }
+
+  /* HEADER */
+  .page-header {
+    padding: 40px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .page-header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .page-header h1 span { color: var(--accent); }
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  /* SECTIONS */
+  section {
+    margin-bottom: 52px;
+    scroll-margin-top: 24px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .main { margin-left: 0; padding: 20px; }
+    .nav { display: none; }
+  }
+
+  /* CODE */
+  code {
+    font-family: 'DM Mono', monospace;
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    margin: 10px 0;
+  }
+  pre code {
+    background: none;
+    color: var(--text);
+    padding: 0;
+    font-size: 12.5px;
+    line-height: 1.7;
+  }
+
+  /* TABLES */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface2);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .badge-orange { background: #fef0e6; color: #b84a18; border: 1px solid #f0c090; }
+  .badge-blue { background: #e6f2fe; color: #1a5a80; border: 1px solid #a0c8f0; }
+  .badge-green { background: #e8f5e0; color: #2a6020; border: 1px solid #a0c880; }
+  .badge-purple { background: #f2e8fe; color: #5a2880; border: 1px solid #c0a0f0; }
+  .badge-red { background: #fee8e8; color: #801a1a; border: 1px solid #f0a0a0; }
+  :root[data-theme="dark"] .badge-orange { background: #2a1808; color: #e07848; border-color: #5a3020; }
+  :root[data-theme="dark"] .badge-blue { background: #081828; color: #5aabcc; border-color: #204060; }
+  :root[data-theme="dark"] .badge-green { background: #081808; color: #78b86a; border-color: #20502a; }
+  :root[data-theme="dark"] .badge-purple { background: #180828; color: #b07acc; border-color: #503080; }
+  :root[data-theme="dark"] .badge-red { background: #200808; color: #cc6060; border-color: #501818; }
+
+  /* CHECKLIST */
+  .checklist {
+    background: var(--checklist-bg);
+    border: 1px solid var(--checklist-border);
+    border-radius: 10px;
+    padding: 20px 24px;
+  }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--checklist-border);
+    font-size: 13.5px;
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .check-num {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--accent3);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent3);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .checklist-item strong { color: var(--accent3); font-weight: 600; }
+
+  /* WARN / TIP */
+  .warn {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--accent5);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  .warn strong { color: var(--accent5); }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  .tip strong { color: var(--accent2); }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    margin: 2px;
+    color: var(--accent);
+  }
+
+  /* MODE CARDS */
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .mode-card h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .mode-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+
+  /* HACK CARD */
+  .hack-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    display: flex;
+    gap: 12px;
+  }
+  .hack-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .hack-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .hack-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+
+  /* MENTAL MODEL */
+  .mental-model {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .mental-model h4 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--accent); margin-bottom: 8px; }
+  .mental-model p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* FLOW */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .flow-step {
+    background: var(--accent);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .flow-arrow { color: var(--text-muted); font-size: 16px; }
+
+  /* COMPARISON */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .cmp-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+  .cmp-col h4 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cmp-col ul { list-style: none; }
+  .cmp-col li { font-size: 12.5px; color: var(--text-muted); padding: 3px 0; line-height: 1.4; }
+  .cmp-col li::before { content: "→ "; color: var(--accent); font-weight: 600; }
+
+  ul.plain { list-style: none; }
+  ul.plain li { padding: 4px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+  ul.plain li:last-child { border: none; }
+  ul.plain li::before { content: "— "; color: var(--text-muted); }
+
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+  .inline-note { font-size: 11.5px; color: var(--text-muted); font-style: italic; margin-top: 4px; }
+
+  /* Print */
+  @media print {
+    .nav, .theme-toggle { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    body { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()">
+  <span id="theme-icon">☀️</span>
+  <span id="theme-label">Light</span>
+</button>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <h1>Claude Code</h1>
+    <span>Cheatsheet 2026</span>
+  </div>
+  <div class="nav-section-label">Quick Ref</div>
+  <a href="#setup">1. Setup</a>
+  <a href="#modes">2. Permission Modes</a>
+  <a href="#commands">3. Slash Commands</a>
+  <div class="nav-section-label">Project</div>
+  <a href="#ritual">4. New Project Ritual</a>
+  <a href="#claudemd">5. CLAUDE.md</a>
+  <a href="#directory">6. .claude Directory</a>
+  <div class="nav-section-label">Build</div>
+  <a href="#tools">7. Skills vs MCP vs Agents</a>
+  <a href="#context">8. Context Management</a>
+  <a href="#planning">9. Plan Mode</a>
+  <div class="nav-section-label">Advanced</div>
+  <a href="#hacks">10. Hacks & Tips</a>
+  <a href="#deploy">11. Deployment</a>
+  <a href="#mental">12. Mental Models</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="page-header">
+    <h1>Claude Code <span>Cheatsheet</span></h1>
+    <p>Based on the 4-hour Claude Code Full Course (2026) · Everything you need, nothing you don't</p>
+  </div>
+
+  <!-- 1. SETUP -->
+  <section id="setup">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Setup & Installation</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Install (Mac/Linux/WSL)</div>
+        <pre><code># Run in Terminal
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Or open Terminal and type:
+claude
+
+# First login
+\login</code></pre>
+        <div class="inline-note">Requires Claude Pro ($17/mo) minimum. Pro → Max for heavy use.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Install (Windows)</div>
+        <pre><code># Open CMD or PowerShell
+# Use the Windows installer from:
+# code.claude.com/docs
+
+# Or use WSL (recommended)
+wsl --install
+# then follow Mac/Linux steps</code></pre>
+        <div class="inline-note">Terminal UX > GUI for advanced features. Learn terminal early.</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">IDEs (pick one)</div>
+        <table>
+          <tr><th>IDE</th><th>Best For</th><th>Notes</th></tr>
+          <tr><td><strong>VS Code</strong></td><td>Beginners</td><td>Install Claude Code extension from Anthropic (verified ✓ only)</td></tr>
+          <tr><td><strong>Antigravity</strong></td><td>Everyone</td><td>Built on VS Code, Google product, cleaner UI, AI-first. Recommended.</td></tr>
+          <tr><td><strong>Terminal</strong></td><td>Power users</td><td>Unlocks fast mode, status line, multi-tab, hooks. Best long-term.</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">GUI Layout (Antigravity / VS Code)</div>
+        <ul class="plain">
+          <li><strong>Left panel</strong> — File explorer / folder tree</li>
+          <li><strong>Middle panel</strong> — Text / code editor</li>
+          <li><strong>Right panel</strong> — Claude Code chat window</li>
+          <li><strong>Bottom left</strong> — Permission mode selector (click to cycle)</li>
+          <li><strong>Bottom right</strong> — Pause button (stops mid-execution)</li>
+          <li><strong>Thinking tab</strong> — Claude's internal reasoning (click to peek)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. PERMISSION MODES -->
+  <section id="modes">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Permission Modes</h2>
+    </div>
+    <p style="margin-bottom:14px; color:var(--text-muted); font-size:13px;">Cycle through modes with <code>Shift + Tab</code> in GUI, or <code>\permissions</code> in terminal.</p>
+    <div class="grid-2">
+      <div class="mode-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="badge badge-blue">Default</span>
+          <h4>Ask Before Edits</h4>
+        </div>
+        <p>Claude asks permission before every file change. Safe but slow. Good for: high-risk codebases, learning what it's doing. Most old-school devs prefer this.</p>
+      </div>
+      <div class="mode-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="badge badge-green">Recommended</span>
+          <h4>Edit Automatically</h4>
+        </div>
+        <p>Auto-accepts edits to existing files. Still asks before creating new files. Good balance for most workflows. Better productivity without full danger.</p>
+      </div>
+      <div class="mode-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="badge badge-purple">Strategic</span>
+          <h4>Plan Mode</h4>
+        </div>
+        <p>Read-only. Claude can browse, research, read files — but makes zero changes. Use at the start of any complex build. <strong>Always use this first.</strong> A minute planning = 10 min saved building.</p>
+      </div>
+      <div class="mode-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="badge badge-orange">Power Users</span>
+          <h4>Bypass Permissions</h4>
+        </div>
+        <p>No prompts. Full access to create, edit, delete anything. Maximum speed. <strong>Risk:</strong> rare but possible to delete important files if Claude misinterprets a request. Enable in VS Code extension settings. Best for knowledge work.</p>
+      </div>
+    </div>
+    <div class="warn" style="margin-top:14px;">
+      <strong>⚠ Bypass Permissions Risk:</strong> One documented case of Claude deleting all hard drive data via a misinterpreted terminal command. Vanishingly rare, but back up important work. Enable in VS Code → Extensions → Claude Code → Settings → "Allow Dangerously Skip Permissions."
+    </div>
+  </section>
+
+  <!-- 3. SLASH COMMANDS -->
+  <section id="commands">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Slash Commands</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Essential Commands</div>
+        <table>
+          <tr><th>Command</th><th>What it does</th></tr>
+          <tr><td><code>/init</code></td><td>Reads your codebase & auto-generates CLAUDE.md. Run this first in any new folder.</td></tr>
+          <tr><td><code>/compact</code></td><td>Compresses conversation history to save tokens & restore context quality.</td></tr>
+          <tr><td><code>/clear</code></td><td>Wipes context entirely. Use when switching to a completely new task.</td></tr>
+          <tr><td><code>/context</code></td><td>Shows full breakdown of what's eating your token budget (must-know).</td></tr>
+          <tr><td><code>/cost</code></td><td>Shows current token usage & cost for this session.</td></tr>
+          <tr><td><code>/permissions</code></td><td>Opens permissions panel — set allow/ask/deny per tool.</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Advanced Commands</div>
+        <table>
+          <tr><th>Command</th><th>What it does</th></tr>
+          <tr><td><code>/model</code></td><td>Switch between Opus, Sonnet, Haiku. Also toggle extended thinking here.</td></tr>
+          <tr><td><code>/thinking</code></td><td>Toggle extended thinking on/off. Reduces output tokens, improves reasoning.</td></tr>
+          <tr><td><code>/status-line</code></td><td>Customize the terminal status bar. Add token counter, loading bar, model info.</td></tr>
+          <tr><td><code>/login</code></td><td>Re-authenticate if session expires.</td></tr>
+          <tr><td><code>/insights</code></td><td>Usage analytics and session insights.</td></tr>
+          <tr><td><code>/fast</code></td><td>Enable fast mode — 2.5x speed, ~3x cost. Worth it for time-sensitive work.</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. NEW PROJECT RITUAL -->
+  <section id="ritual">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>New Project Setup Ritual</h2>
+    </div>
+    <p style="margin-bottom:16px; color:var(--text-muted); font-size:13px;">Do this every single time you start a new project. Non-negotiable.</p>
+    <div class="checklist">
+      <div class="checklist-item">
+        <div class="check-num">1</div>
+        <div><strong>Create a dedicated folder</strong> — Give it a clear, descriptive name. Open it in your IDE (VS Code / Antigravity).</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">2</div>
+        <div><strong>Open Claude Code & run <code>/init</code></strong> — This reads your codebase (or empty folder) and auto-generates a CLAUDE.md. Don't skip this. It saves tokens every future session.</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">3</div>
+        <div><strong>Review & prune the generated CLAUDE.md</strong> — Remove bloat. Add your specific conventions. Keep it under 200–500 lines. Put the most critical rules at the very top (primacy bias).</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">4</div>
+        <div><strong>Set up .claude/ directory structure</strong> — Create <code>.claude/rules/</code>, <code>.claude/skills/</code>, <code>.claude/agents/</code> as needed. Not all projects need all folders.</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">5</div>
+        <div><strong>Choose your permission mode</strong> — For most new projects: start with Plan Mode to map the build, then switch to Edit Automatically or Bypass for execution.</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">6</div>
+        <div><strong>For complex builds — run Plan Mode first</strong> — Describe what you want (voice dump is fine). Let Claude ask clarifying questions. Get a written plan/spec before touching any code.</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">7</div>
+        <div><strong>Set up any needed MCP servers or skills</strong> — Paste the MCP JSON snippet into Claude. Test it works. Convert to a skill if you'll use it repeatedly (token-efficient).</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">8</div>
+        <div><strong>Execute with the Task → Do → Verify loop</strong> — Give Claude a task. Let it do the task. Make it verify its result (screenshot, test, etc.). Repeat. Never skip verification.</div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-num">9</div>
+        <div><strong>Periodic context management</strong> — Watch your context % in the status bar. Run <code>/compact</code> proactively. If switching tasks, run <code>/clear</code>. Update CLAUDE.md with any new rules Claude kept getting wrong.</div>
+      </div>
+    </div>
+    <div class="tip" style="margin-top:14px;">
+      <strong>💡 Voice dump tip:</strong> Use a voice transcription tool to describe your project requirements. You speak ~200 wpm vs typing ~65 wpm — that's 3x faster. Then have Claude compress it into a tight spec before the build starts.
+    </div>
+  </section>
+
+  <!-- 5. CLAUDE.MD -->
+  <section id="claudemd">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>CLAUDE.md Best Practices</h2>
+    </div>
+    <p style="margin-bottom:14px; font-size:13px; color:var(--text-muted);">CLAUDE.md is injected at the top of every conversation — before your first message. It steers the entire session. Treat it like your project's operating manual for Claude.</p>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Three Layers (merged in order)</div>
+      <table>
+        <tr><th>Layer</th><th>Location</th><th>Scope</th></tr>
+        <tr><td><span class="badge badge-purple">Global</span></td><td><code>~/.claude/CLAUDE.md</code></td><td>Applies to ALL workspaces. Put your personal preferences, universal rules here.</td></tr>
+        <tr><td><span class="badge badge-blue">Project</span></td><td><code>.claude/CLAUDE.md</code> in your folder</td><td>Applies to this project only. Project-specific conventions, stack info, etc.</td></tr>
+        <tr><td><span class="badge badge-orange">Enterprise</span></td><td>Managed system level</td><td>For enterprise licenses only. Ignore unless relevant.</td></tr>
+      </table>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">✅ DO</div>
+        <ul class="plain">
+          <li>Run <code>/init</code> first to auto-generate a base CLAUDE.md</li>
+          <li>Use bullet points & short headings — high information density</li>
+          <li>Put critical rules & guardrails at the very TOP (primacy bias)</li>
+          <li>Keep it 200–500 lines max. Shorter = smarter Claude</li>
+          <li>Treat it as living code — prune it regularly</li>
+          <li>Add a rule any time Claude makes the same mistake 2–3 times</li>
+          <li>Use <code>@include filename.md</code> to reference other files</li>
+          <li>Split into rules files for big projects (<code>.claude/rules/</code>)</li>
+          <li>Find cutting-edge tips via Grok: "best CLAUDE.md practices last month"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">❌ DON'T</div>
+        <ul class="plain">
+          <li>Dump entire API docs or style guides into it</li>
+          <li>Write vague aspirational rules like "be smart" or "make no mistakes"</li>
+          <li>Exceed 500 lines — quality drops, cost rises</li>
+          <li>Leave it static — it will accumulate cruft over time</li>
+          <li>Use voice transcript dumps directly — compress first</li>
+          <li>Put things in CLAUDE.md that should be skills (load on demand = better)</li>
+          <li>Forget that everything in CLAUDE.md costs tokens every single session</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:4px;">
+      <strong>💡 Primacy & Recency Bias:</strong> Claude (like humans) remembers the beginning and end of a prompt best, with the middle being weakest. Put your most important guardrails at the TOP of CLAUDE.md.
+    </div>
+  </section>
+
+  <!-- 6. .claude DIRECTORY -->
+  <section id="directory">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>.claude Directory Structure</h2>
+    </div>
+    <p style="margin-bottom:14px; font-size:13px; color:var(--text-muted);">The <code>.claude/</code> folder (hidden by default) unlocks advanced functionality. You don't need all of it — start with what you need.</p>
+
+    <div class="card">
+      <div class="card-title">Full Structure Map</div>
+      <pre><code>.claude/
+├── CLAUDE.md              # Project-level brain (injected every session)
+├── CLAUDE.local.md        # Git-ignored personal overrides (secrets, local paths)
+├── settings.json          # Team permissions, hooks, env variables
+├── settings.local.json    # Git-ignored local settings
+├── .mcp.json              # MCP server configurations
+├── rules/                 # Split CLAUDE.md into focused rule files
+│   ├── workflow.md        #   → How to approach tasks
+│   ├── tech-defaults.md   #   → Stack preferences, libraries
+│   └── design-rules.md    #   → UI/style conventions
+├── skills/                # On-demand workflows (only loaded when invoked)
+│   ├── scrape-leads.md    #   → Lead scraping workflow + scripts
+│   └── design-website.md  #   → Website design workflow
+└── agents/                # Subagent definitions
+    ├── researcher.md       #   → Research subagent (uses cheaper Sonnet)
+    ├── code-reviewer.md    #   → Unbiased code review (blank context)
+    └── qa-tester.md        #   → Automated test generation & running</code></pre>
+    </div>
+
+    <div class="grid-3" style="margin-top:14px;">
+      <div class="card">
+        <div class="card-title">rules/</div>
+        <p style="font-size:12.5px; color:var(--text-muted);">Break a big CLAUDE.md into focused files. Each rule file covers one domain. Easier to maintain, update one without touching others. Good for teams.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">skills/</div>
+        <p style="font-size:12.5px; color:var(--text-muted);">Only the front matter (name/description) loads in context. Full skill only loads when invoked. <strong>Huge token saving.</strong> Convert MCP workflows to skills for efficiency.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">agents/</div>
+        <p style="font-size:12.5px; color:var(--text-muted);">Subagents run in isolated context. Use for: research (cheap model, parallel), code review (unbiased blank slate), QA testing (automated). Pollute their own context, not yours.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-title">Memory.md — Auto Memory</div>
+      <p style="font-size:13px;">A small file injected at the start of every session — separate from CLAUDE.md. When you say "remember that…" Claude writes to this file. Persists between sessions. Think of it as Claude's personal notepad.</p>
+      <pre style="margin-top:10px;"><code># Example memory.md entries
+- User's brother's name is George
+- User prefers serif fonts for headings
+- Stripe API key pattern: sk_test_...</code></pre>
+    </div>
+  </section>
+
+  <!-- 7. SKILLS vs MCP vs AGENTS -->
+  <section id="tools">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Skills vs MCP vs Subagents</h2>
+    </div>
+
+    <div class="comparison">
+      <div class="cmp-col">
+        <h4 style="color:var(--accent3);">Skills</h4>
+        <ul>
+          <li>You define the workflow</li>
+          <li>Stored as .md files in <code>.claude/skills/</code></li>
+          <li>Only front matter loads in context (tiny token cost)</li>
+          <li>Uses native Claude intelligence for error handling</li>
+          <li>Best for: your own repeatable workflows, SOPs</li>
+          <li>~60 tokens in context vs ~1600 for MCP</li>
+          <li>Long-term preferred over MCP</li>
+        </ul>
+      </div>
+      <div class="cmp-col">
+        <h4 style="color:var(--accent2);">MCP Servers</h4>
+        <ul>
+          <li>Others build the tools (developer teams)</li>
+          <li>Easy 1-step install (paste JSON snippet)</li>
+          <li>High token cost — some eat 20%+ of context</li>
+          <li>Great for prototyping integrations quickly</li>
+          <li>Best for: testing if something is possible</li>
+          <li>Then convert to a skill for production use</li>
+          <li>Avoid bloated MCPs with 50+ tools</li>
+        </ul>
+      </div>
+      <div class="cmp-col">
+        <h4 style="color:var(--accent4);">Subagents</h4>
+        <ul>
+          <li>Isolated context windows (fresh start)</li>
+          <li>Run in parallel — big speed gains</li>
+          <li>Return summary to parent (e.g. 2K tokens vs 100K)</li>
+          <li>Use cheaper models (Sonnet, Haiku)</li>
+          <li>Best 3: researcher, code reviewer, QA tester</li>
+          <li>Don't spawn subagents for simple queries</li>
+          <li>More tasks in parallel = multiply failure risk</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:8px;">
+      <strong>💡 The MCP → Skill Pipeline:</strong> Install MCP → test if it can do what you want → if yes, ask Claude to rebuild it as a skill using direct API calls → remove the MCP. You'll use ~25x fewer tokens and it'll run faster.
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-title">3 Subagents Worth Always Having</div>
+      <table>
+        <tr><th>Agent</th><th>Why it works</th><th>Model to use</th></tr>
+        <tr>
+          <td><strong>Researcher</strong></td>
+          <td>Does web research, API lookups, doc reading in its own context — returns just a tight summary. 50x cheaper than doing it in main thread.</td>
+          <td><span class="badge badge-green">Sonnet</span></td>
+        </tr>
+        <tr>
+          <td><strong>Code Reviewer</strong></td>
+          <td>No prior context = no bias. Fresh eyes on the code. Catches things the parent agent missed because it was too deep in its own thinking.</td>
+          <td><span class="badge badge-green">Sonnet</span></td>
+        </tr>
+        <tr>
+          <td><strong>QA Tester</strong></td>
+          <td>Generates automated tests, runs them, reports failures. The equivalent of test-driven development without you having to write tests.</td>
+          <td><span class="badge badge-green">Sonnet</span></td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 8. CONTEXT MANAGEMENT -->
+  <section id="context">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Context Management</h2>
+    </div>
+    <p style="margin-bottom:14px; font-size:13px; color:var(--text-muted);">Run <code>/context</code> to see exactly what's eating your token budget. You're billed for everything — including system prompts you didn't write.</p>
+
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">What Eats Your Context (in order of injection)</div>
+      <table>
+        <tr><th>Source</th><th>Typical Size</th><th>You Control?</th></tr>
+        <tr><td>System tools (bash, web search, task, etc.)</td><td>~17,000 tokens</td><td><span class="badge badge-red">No</span></td></tr>
+        <tr><td>MCP tool definitions</td><td>1,600–20,000+ tokens</td><td><span class="badge badge-green">Yes</span> — choose MCPs carefully</td></tr>
+        <tr><td>Global CLAUDE.md (<code>~/.claude/</code>)</td><td>Variable</td><td><span class="badge badge-green">Yes</span> — keep short</td></tr>
+        <tr><td>Project CLAUDE.md + rules</td><td>Variable</td><td><span class="badge badge-green">Yes</span> — keep short</td></tr>
+        <tr><td>Memory.md</td><td>~88 tokens</td><td><span class="badge badge-green">Yes</span> — usually tiny</td></tr>
+        <tr><td>Skills (front matter only)</td><td>~60 tokens each</td><td><span class="badge badge-green">Yes</span> — very efficient</td></tr>
+        <tr><td>Your messages + tool calls</td><td>Grows over time</td><td><span class="badge badge-orange">Manage actively</span></td></tr>
+      </table>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Active Management Strategies</div>
+        <ul class="plain">
+          <li>Run <code>/compact</code> before context gets full — don't wait for auto-compact</li>
+          <li>Run <code>/clear</code> when switching to a totally different task</li>
+          <li>Use <code>/compact [custom instructions]</code> to tell it what to prioritize when compressing</li>
+          <li>Add <code>/status-line</code> token counter in terminal to monitor live</li>
+          <li>Write specific prompts — "fix this one bug in auth.js" beats "improve the codebase"</li>
+          <li>Compress voice transcripts before sending to Claude (use a cheap model)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Structural Token Savings</div>
+        <ul class="plain">
+          <li>Use skills instead of MCP for repeated tasks (~25x token saving)</li>
+          <li>Move long CLAUDE.md instructions into skills (load on demand)</li>
+          <li>Use Sonnet/Haiku for subagents — not Opus</li>
+          <li>Front-load research in plan mode — avoid research during building</li>
+          <li>Avoid bloated MCP servers (use <code>/context</code> to audit)</li>
+          <li>Tell Claude to write concisely — "give bare bones output, ask if I need more"</li>
+          <li>Enable extended thinking — reasoning stays out of message chain</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="warn">
+      <strong>⚠ Context Rot Warning:</strong> Long conversations degrade Claude's output quality. There's a negative relationship between prompt length and output quality. This is why <code>/compact</code> and <code>/clear</code> aren't just about cost — they actively improve Claude's performance.
+    </div>
+  </section>
+
+  <!-- 9. PLAN MODE -->
+  <section id="planning">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Plan Mode & Complex Builds</h2>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">1. Voice dump requirements</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">2. Switch to Plan Mode</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">3. Claude asks Qs</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">4. Review the plan</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">5. Switch to Bypass</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">6. Execute</div>
+    </div>
+
+    <div class="grid-2" style="margin-top:16px;">
+      <div class="card" style="border-left: 3px solid var(--accent);">
+        <div class="card-title">❌ Without Planning</div>
+        <ul class="plain">
+          <li>Build (15 min)</li>
+          <li>Discover wrong approach (5 min testing)</li>
+          <li>Rebuild from scratch (15 min)</li>
+          <li>Repeat until right</li>
+          <li style="font-weight:600; color:var(--accent);">Total: 35+ min + high token cost</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--accent3);">
+        <div class="card-title">✅ With Planning</div>
+        <ul class="plain">
+          <li>Plan mode (5 min) — catches wrong approaches in spec</li>
+          <li>Refine spec (5 min)</li>
+          <li>Execute once, correctly (5–15 min)</li>
+          <li style="font-weight:600; color:var(--accent3);">Total: 15–25 min + lower token cost</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:14px;">
+      <strong>💡 Rule of thumb:</strong> 1 minute of planning saves 10 minutes of building. Use plan mode for anything more complex than a simple design or text edit. The plan becomes a reference document Claude can use throughout the build.
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-title">Design Workflow (3 Approaches)</div>
+      <table>
+        <tr><th>Approach</th><th>How</th><th>Best For</th></tr>
+        <tr>
+          <td><strong>Screenshot Loop</strong></td>
+          <td>Give Claude a reference screenshot → it builds → screenshots result → compares & iterates until 99% match</td>
+          <td>Replicating a design style. Gets you 80% there fast, then refines to 99%.</td>
+        </tr>
+        <tr>
+          <td><strong>Voice Transcript Dump</strong></td>
+          <td>Hold FN key → speak your requirements → paste into Claude. No design reference needed.</td>
+          <td>Custom builds with no design inspiration. Takes more back-and-forth.</td>
+        </tr>
+        <tr>
+          <td><strong>Components</strong></td>
+          <td>Browse sites like 21st.dev → "Copy Prompt" → paste into Claude → install the component</td>
+          <td>Specific UI elements (animations, buttons, sign-up forms). Mix and match.</td>
+        </tr>
+      </table>
+      <div class="tip" style="margin-top:10px;">
+        <strong>💡 Screenshot Hack:</strong> To capture a full-page screenshot — Inspect (right-click) → set width to 1920px → Cmd+Shift+P → type "screenshot" → "Capture full size screenshot." Then resize at ilovemage.com to under ~4MB before feeding to Claude.
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. HACKS & TIPS -->
+  <section id="hacks">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Hacks & Pro Tips</h2>
+    </div>
+    <div class="grid-2">
+      <div class="hack-card">
+        <div class="hack-icon">🗣️</div>
+        <div>
+          <h4>Voice Transcript 3x Speed</h4>
+          <p>You speak ~200 wpm but type ~65 wpm. Use Mac's FN key or any voice-to-text tool to dump requirements. Then paste into Claude and say "compress this into a high-info-density spec."</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">📸</div>
+        <div>
+          <h4>Full-Page Screenshot Hack</h4>
+          <p>Right-click any site → Inspect → set dimensions to 1920×1080 → Cmd+Shift+P (Ctrl+Shift+P on Windows) → "Capture full size screenshot." Gets the entire page. Resize to under 4MB before use.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">🔔</div>
+        <div>
+          <h4>Chime Hook for Multi-Tab</h4>
+          <p>Set up a hook that plays a different chime sound when each Claude tab finishes. Chime 1 = tab 1 done. Chime 2 = tab 2 done. You can supervise 3–4 tabs without constantly checking.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">🐦</div>
+        <div>
+          <h4>Grok for Cutting-Edge Tips</h4>
+          <p>Go to X.com → ask Grok: "compile best CLAUDE.md practices from the last month." Claude Code power users post gold daily. Grok has full Twitter access. Better than static docs.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">🧹</div>
+        <div>
+          <h4>Clean Up Workspace Bloat</h4>
+          <p>Claude in bypass mode creates temp files, tries failed approaches, installs libraries. Periodically ask: "go through my workspace and delete anything that's no longer needed." Do this every few sessions.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">🔁</div>
+        <div>
+          <h4>MCP → Skill Pipeline</h4>
+          <p>Use MCP to prototype a workflow (5 min setup). If it works, say: "convert this to a skill using direct API calls instead of MCP." You'll drop from ~1600 tokens to ~60 tokens per session.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">⚡</div>
+        <div>
+          <h4>Fast Mode in Terminal</h4>
+          <p>Run <code>/fast</code> in terminal for 2.5x speed at ~3x cost. Worth it when you're in productive flow and time matters more than token cost. Not available in GUI.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">🤖</div>
+        <div>
+          <h4>Let Claude Make Its Own Skills</h4>
+          <p>Say: "I want a skill that does X. Here's how skills work [paste docs]. Build it for me." Test in a fresh instance with zero context. If it fails, give feedback. Usually reaches 95%+ accuracy in 2–3 iterations.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">📊</div>
+        <div>
+          <h4>Custom Status Line</h4>
+          <p>In terminal, run <code>/status-line</code> and ask for a token usage loading bar: "Show me a bar with X/200K tokens used." Monitors context burn rate live as you work.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">🎯</div>
+        <div>
+          <h4>Thinking Tab = Free Scratch Pad</h4>
+          <p>When extended thinking is on, Claude reasons in a "thinking" tab that doesn't pollute your message context. The output is short. The reasoning is long. You pay for thinking, but your context stays clean.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">🌐</div>
+        <div>
+          <h4>Chrome DevTools MCP = Browser Control</h4>
+          <p>Install the Chrome DevTools MCP. Claude can navigate, click, screenshot, fill forms, and extract data from any website — even those with no API. Far faster and more reliable than built-in browser tools.</p>
+        </div>
+      </div>
+      <div class="hack-card">
+        <div class="hack-icon">🔀</div>
+        <div>
+          <h4>Parallel Multi-Tab Development</h4>
+          <p>Open multiple Antigravity windows. Run Claude in each on different design variants or features simultaneously. Cap at 3–4 tabs. Use chime hooks to know when each finishes. You generate 3–4x output in the same time.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="warn" style="margin-top:4px;">
+      <strong>⚠ Extension Security:</strong> Only install Claude Code extensions from verified Anthropic sources (look for the checkmark). Third-party extensions with similar names have been known to contain malware.
+    </div>
+  </section>
+
+  <!-- 11. DEPLOYMENT -->
+  <section id="deploy">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Deployment</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">Netlify — Static Sites</div>
+        <ul class="plain">
+          <li>Free tier available</li>
+          <li>Drag-and-drop or Git-connected</li>
+          <li>Best for: websites, web apps, frontends</li>
+          <li>Claude can deploy directly with CLI</li>
+          <li>Add env variables in Site Settings</li>
+          <li>Custom domains supported</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Modal — Backend / APIs</div>
+        <ul class="plain">
+          <li>$5 free credit on signup (often lasts months)</li>
+          <li>Deploy any Python function as a live URL</li>
+          <li>Best for: skills, webhooks, automation endpoints</li>
+          <li>Claude can write and deploy in one step</li>
+          <li>Integrates with N8n, Make.com, Zapier via webhooks</li>
+          <li>Much cheaper than no-code platforms</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Security Warning ⚠</div>
+        <ul class="plain">
+          <li>Never deploy vibe-coded apps with user data without a security review</li>
+          <li>Use non-obvious domain names (scanners find short domains fast)</li>
+          <li>Don't charge money without a dev reviewing auth</li>
+          <li>Use for internal tools and client-facing (not public e-commerce)</li>
+          <li>Have a developer audit for $200–500 before going public</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. MENTAL MODELS -->
+  <section id="mental">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Core Mental Models</h2>
+    </div>
+    <div class="grid-3">
+      <div class="mental-model">
+        <h4>Task → Do → Verify</h4>
+        <p>The core loop. Never give Claude a task without also giving it a way to verify its own result — screenshot, test, comparison. This is the single biggest lever for quality.</p>
+      </div>
+      <div class="mental-model">
+        <h4>The Ship Analogy</h4>
+        <p>CLAUDE.md is your initial compass heading. A 1° error at the start becomes a 1,000km miss over long distance. Nail the setup before sailing. Every session benefits.</p>
+      </div>
+      <div class="mental-model">
+        <h4>1 Min Planning = 10 Min Building</h4>
+        <p>The ROI on plan mode is enormous. Every minute spent in the spec phase eliminates many minutes of rebuilding. Always plan before complex builds.</p>
+      </div>
+      <div class="mental-model">
+        <h4>You Are the Ideas, Claude Are the Hands</h4>
+        <p>Your value is knowing what to build and why. Claude's value is building it fast. Don't try to out-code Claude. Out-think it. Give it direction, let it execute.</p>
+      </div>
+      <div class="mental-model">
+        <h4>Carve the River, Float the Boat</h4>
+        <p>Your job is to create constraints (CLAUDE.md, rules, skills, verification loops). Claude flows within those constraints. The tighter the riverbanks, the faster and straighter the water flows.</p>
+      </div>
+      <div class="mental-model">
+        <h4>Token Budget = Quality Budget</h4>
+        <p>More tokens ≠ better results. Longer context actually reduces Claude's average output quality. Ruthlessly managing context isn't just about cost — it's about maintaining peak performance.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-icon').textContent = next === 'dark' ? '🌙' : '☀️';
+    document.getElementById('theme-label').textContent = next === 'dark' ? 'Dark' : 'Light';
+    localStorage.setItem('theme', next);
+  }
+
+  // Restore saved theme
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    if (saved === 'dark') {
+      document.getElementById('theme-icon').textContent = '🌙';
+      document.getElementById('theme-label').textContent = 'Dark';
+    }
+  }
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('.nav a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
